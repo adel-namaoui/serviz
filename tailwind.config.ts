@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+
 const config: Config = {
   darkMode: ["class"],
   content: ["./src/**/*.{ts,tsx}"],
@@ -24,11 +25,18 @@ const config: Config = {
         "fade-up": { from: { opacity: "0", transform: "translateY(10px)" }, to: { opacity: "1", transform: "translateY(0)" } },
         "fade-in": { from: { opacity: "0" }, to: { opacity: "1" } },
         spin: { to: { transform: "rotate(360deg)" } },
+        // AJOUT DE L'ANIMATION SHIMMER ICI
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' }
+        }
       },
       animation: {
         "fade-up": "fade-up 0.35s ease-out",
         "fade-in": "fade-in 0.25s ease-out",
         spin: "spin 0.7s linear infinite",
+        // AJOUT DE L'ANIMATION SHIMMER ICI
+        shimmer: "shimmer 2s infinite"
       },
     },
   },
