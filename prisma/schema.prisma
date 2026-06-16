@@ -1,4 +1,4 @@
-`// Version 2.0 - Fix Deployment`
+// Version 2.0 - Fix Deployment
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
