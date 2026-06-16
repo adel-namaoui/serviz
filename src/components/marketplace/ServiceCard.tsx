@@ -16,7 +16,7 @@ export function ServiceCard({ id, title, titleAr, sellerName, rating, reviewCoun
         <div className="h-40 bg-secondary relative overflow-hidden shrink-0">
           {images?.[0]
             ? <img src={images[0]} alt={displayTitle} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            : <div className="absolute inset-0 flex items-center justify-center text-6xl font-bold text-muted-foreground/8 select-none">SZ</div>
+            : <div className="absolute inset-0 flex items-center justify-center text-6xl font-bold text-muted-foreground/8 select-none">BrandDZ</div>
           }
         </div>
         <div className="p-4 flex flex-col gap-2.5 flex-1">

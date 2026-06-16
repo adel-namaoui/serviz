@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/Toaster"
 const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-cairo", display: "swap" })
 
 export const metadata: Metadata = {
-  title: { default: "Serviz | سيرفيز", template: "%s | Serviz" },
+  title: { default: "BrandDZ  | براند ديزاد", template: "%s | BrandDZ " },
   description: "أكبر سوق للخدمات المصغرة في الجزائر — La plus grande marketplace freelance d'Algérie",
 }
 
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="flex-1">{children}</main>
             <footer className="border-t border-border/50 py-8 mt-12">
               <div className="container text-center text-sm text-muted-foreground">
-                © 2025 Serviz · أكبر سوق للخدمات المصغرة في الجزائر
+                © 2025 BrandDZ  · أكبر سوق للخدمات المصغرة في الجزائر
               </div>
             </footer>
           </div>
