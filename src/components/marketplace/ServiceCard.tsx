@@ -13,11 +13,28 @@ export function ServiceCard({ id, title, titleAr, sellerName, rating, reviewCoun
         "group bg-card border border-border rounded-2xl overflow-hidden h-full flex flex-col",
         "hover:border-primary/40 hover:shadow-xl hover:shadow-black/8 transition-all duration-200"
       )}>
-        <div className="h-40 bg-secondary relative overflow-hidden shrink-0">
-          {images?.[0]
-            ? <img src={images[0]} alt={displayTitle} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-            : <div className="absolute inset-0 flex items-center justify-center text-6xl font-bold text-muted-foreground/8 select-none">BrandDZ</div>
-          }
+        <div className="h-40 bg-slate-900 relative overflow-hidden shrink-0 flex items-center justify-center">
+          {images?.[0] ? (
+            <img 
+              src={images[0]} 
+              alt={displayTitle} 
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+            />
+          ) : (
+            <div className="relative flex items-center justify-center w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/20 via-slate-900 to-slate-950">
+              {/* Effet de grille 3D en arrière-plan */}
+              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+              
+              {/* Le texte ou logo avec effet de profondeur */}
+              <div className="relative transform-gpu transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3">
+                <span className="text-4xl font-black tracking-tighter text-white drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] italic">
+                  Brand<span className="text-primary">DZ</span>
+                </span>
+                {/* Reflet brillant */}
+                <div className="absolute -inset-2 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 skew-x-12 translate-x-full group-hover:animate-[shimmer_2s_infinite]"></div>
+              </div>
+            </div>
+          )}
         </div>
         <div className="p-4 flex flex-col gap-2.5 flex-1">
           <div className="flex items-center gap-2 min-w-0">
