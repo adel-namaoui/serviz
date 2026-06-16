@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -8,8 +8,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole   { CLIENT FREELANCER ADMIN }
-enum OrderStatus { PENDING IN_PROGRESS REVISION DELIVERED COMPLETED CANCELLED }
+enum UserRole {
+  CLIENT
+  FREELANCER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  IN_PROGRESS
+  REVISION
+  DELIVERED
+  COMPLETED
+  CANCELLED
+}
 
 model User {
   id            String    @id @default(cuid())
