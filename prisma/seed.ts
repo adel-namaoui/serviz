@@ -7,34 +7,34 @@ async function main() {
 
   // ── Users ─────────────────────────────────────────────────────
   const adminPw = await bcrypt.hash("admin123", 10)
-  const admin = await db.user.upsert({ where: { email: "admin@serviz.dz" }, update: {}, create: {
-    name: "Admin Serviz", email: "admin@serviz.dz", passwordHash: adminPw, role: "ADMIN" }})
+  const admin = await db.user.upsert({ where: { email: "admin@BrandDZ .dz" }, update: {}, create: {
+    name: "Admin BrandDZ ", email: "admin@BrandDZ .dz", passwordHash: adminPw, role: "ADMIN" }})
 
   const freelancers = await Promise.all([
-    db.user.upsert({ where: { email: "karim@serviz.dz" }, update: {}, create: {
-      name: "Karim Designs", email: "karim@serviz.dz",
+    db.user.upsert({ where: { email: "karim@BrandDZ .dz" }, update: {}, create: {
+      name: "Karim Designs", email: "karim@BrandDZ .dz",
       passwordHash: await bcrypt.hash("pass123", 10), role: "FREELANCER",
       bio: "Designer graphique avec 6 ans d'expérience. Spécialiste logos & branding." }}),
-    db.user.upsert({ where: { email: "sara@serviz.dz" }, update: {}, create: {
-      name: "Sara Marketing", email: "sara@serviz.dz",
+    db.user.upsert({ where: { email: "sara@BrandDZ .dz" }, update: {}, create: {
+      name: "Sara Marketing", email: "sara@BrandDZ .dz",
       passwordHash: await bcrypt.hash("pass123", 10), role: "FREELANCER",
       bio: "Experte marketing digital & réseaux sociaux. +200 campagnes réussies." }}),
-    db.user.upsert({ where: { email: "amine@serviz.dz" }, update: {}, create: {
-      name: "Amine Dev", email: "amine@serviz.dz",
+    db.user.upsert({ where: { email: "amine@BrandDZ .dz" }, update: {}, create: {
+      name: "Amine Dev", email: "amine@BrandDZ .dz",
       passwordHash: await bcrypt.hash("pass123", 10), role: "FREELANCER",
       bio: "Développeur web full-stack. React, Next.js, Node.js." }}),
-    db.user.upsert({ where: { email: "nadia@serviz.dz" }, update: {}, create: {
-      name: "Nadia Video", email: "nadia@serviz.dz",
+    db.user.upsert({ where: { email: "nadia@BrandDZ .dz" }, update: {}, create: {
+      name: "Nadia Video", email: "nadia@BrandDZ .dz",
       passwordHash: await bcrypt.hash("pass123", 10), role: "FREELANCER",
       bio: "Monteuse vidéo professionnelle. Spécialiste Reels & contenu TikTok." }}),
-    db.user.upsert({ where: { email: "youcef@serviz.dz" }, update: {}, create: {
-      name: "Youcef Photo", email: "youcef@serviz.dz",
+    db.user.upsert({ where: { email: "youcef@BrandDZ .dz" }, update: {}, create: {
+      name: "Youcef Photo", email: "youcef@BrandDZ .dz",
       passwordHash: await bcrypt.hash("pass123", 10), role: "FREELANCER",
       bio: "Photographe professionnel basé à Alger. Produits, portraits, événements." }}),
   ])
 
-  const client = await db.user.upsert({ where: { email: "client@serviz.dz" }, update: {}, create: {
-    name: "Ahmed Client", email: "client@serviz.dz",
+  const client = await db.user.upsert({ where: { email: "client@BrandDZ .dz" }, update: {}, create: {
+    name: "Ahmed Client", email: "client@BrandDZ .dz",
     passwordHash: await bcrypt.hash("client123", 10), role: "CLIENT" }})
 
   // ── Categories ────────────────────────────────────────────────
@@ -274,13 +274,13 @@ async function main() {
 
   console.log("✅ Seed terminé!")
   console.log("─────────────────────────────────────────")
-  console.log("Admin:     admin@serviz.dz    / admin123")
-  console.log("Client:    client@serviz.dz   / client123")
-  console.log("Designer:  karim@serviz.dz    / pass123")
-  console.log("Marketing: sara@serviz.dz     / pass123")
-  console.log("Dev:       amine@serviz.dz    / pass123")
-  console.log("Vidéo:     nadia@serviz.dz    / pass123")
-  console.log("Photo:     youcef@serviz.dz   / pass123")
+  console.log("Admin:     admin@BrandDZ .dz    / admin123")
+  console.log("Client:    client@BrandDZ .dz   / client123")
+  console.log("Designer:  karim@BrandDZ .dz    / pass123")
+  console.log("Marketing: sara@BrandDZ .dz     / pass123")
+  console.log("Dev:       amine@BrandDZ .dz    / pass123")
+  console.log("Vidéo:     nadia@BrandDZ .dz    / pass123")
+  console.log("Photo:     youcef@BrandDZ .dz   / pass123")
 }
 
 main().catch(console.error).finally(() => db.$disconnect())
