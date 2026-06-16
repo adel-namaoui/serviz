@@ -42,7 +42,7 @@ export function Navbar() {
       <div className="container flex h-16 items-center gap-3">
         {/* Logo */}
         <Link href="/" className="shrink-0 font-bold text-2xl tracking-tight select-none">
-          <span>S</span><span className="text-primary">Z</span>
+          <span>Brand</span><span className="text-primary">DZ</span>
         </Link>
 
         {/* Nav */}
