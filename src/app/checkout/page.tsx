@@ -81,7 +81,7 @@ export default async function CheckoutPage({
             
             <div className="flex items-center justify-between border-t border-border pt-3">
               <span className="text-muted-foreground text-sm">المجموع</span>
-              <span className="text-2xl font-bold text-primary">${price}</span>
+              <span className="text-2xl font-bold text-primary">{price} DA</span>
             </div>
           </div>
 

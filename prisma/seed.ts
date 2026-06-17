@@ -231,7 +231,7 @@ async function main() {
             sellerId: seller.id,
             subCategoryId: createdSub.id,
             title: title,
-            titleAr: `خدمة ${sub.nameAr} احترافية - نسخة ${i}`,
+            titleAr: `خدمة ${sub.nameAr}`,
             description: descFn(sub.name),
             price: price,
             deliveryDays: rand([1, 2, 3, 5, 7]),

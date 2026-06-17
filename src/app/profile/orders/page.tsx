@@ -83,7 +83,7 @@ export default async function OrdersPage() {
                     <span className={cn("px-2.5 py-1 rounded-full text-xs font-semibold border", st.bg, st.color)}>
                       {st.label}
                     </span>
-                    <p className="text-xs text-muted-foreground mt-1.5">${order.totalPrice}</p>
+                    <p className="text-xs text-muted-foreground mt-1.5">{order.totalPrice} DA</p>
                   </div>
                 </div>
 

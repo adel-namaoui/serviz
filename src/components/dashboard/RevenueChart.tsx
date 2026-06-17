@@ -26,7 +26,7 @@ export function RevenueChart({ data }: Props) {
           tick={{ fill: textColor, fontSize: 11 }}
           axisLine={false}
           tickLine={false}
-          tickFormatter={(v: number) => `$${v}`}
+          tickFormatter={(v: number) => `${v} DA`}
         />
         <Tooltip
             contentStyle={{
@@ -39,7 +39,7 @@ export function RevenueChart({ data }: Props) {
             labelStyle={{ color: isDark ? "#e2e8f0" : "#1a202c", fontWeight: 600, marginBottom: 4 }}
             
             // CHANGEMENT ICI : On utilise (v: any) pour éviter le conflit de type avec Recharts
-            formatter={(v: any) => [`$${v}`, "إيرادات"] as [string, string]}
+            formatter={(v: any) => [`${v} DA`, "إيرادات"] as [string, string]}
             
             cursor={{ fill: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)" }}
         />

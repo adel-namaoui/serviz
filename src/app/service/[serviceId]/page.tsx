@@ -67,7 +67,7 @@ export default async function ServicePage({
           <div className="rounded-2xl overflow-hidden bg-secondary aspect-video flex items-center justify-center">
             {s.images?.[0]
               ? <img src={s.images[0]} alt={s.title} className="w-full h-full object-cover" />
-              : <span className="text-8xl font-bold text-muted-foreground/8 select-none">SZ</span>
+              : <span className="text-8xl font-bold text-muted-foreground/8 select-none">BDZ</span>
             }
           </div>
 
@@ -90,7 +90,7 @@ export default async function ServicePage({
                 {s.packages.map((p, i) => (
                   <div key={p.id} className={`p-4 border-b border-border ${i < s.packages.length - 1 ? "border-e" : ""}`}>
                     <p className="font-bold text-sm">{p.name}</p>
-                    <p className="text-xl font-bold text-primary mt-1">${p.price}</p>
+                    <p className="text-xl font-bold text-primary mt-1">{p.price} DA</p>
                     <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{p.description}</p>
                     <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{p.deliveryDays}j</span>
@@ -123,7 +123,7 @@ export default async function ServicePage({
             <div className="p-5 space-y-4">
               <div>
                 <p className="text-xs text-muted-foreground mb-1">بداية من</p>
-                <p className="text-3xl font-bold text-primary">${pkg?.price ?? s.price}</p>
+                <p className="text-3xl font-bold text-primary">{pkg?.price ?? s.price} DA</p>
               </div>
               <div className="flex items-center gap-4 text-sm text-muted-foreground py-3 border-y border-border/50">
                 <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{pkg?.deliveryDays ?? s.deliveryDays} أيام تسليم</span>

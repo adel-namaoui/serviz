@@ -73,7 +73,7 @@ export function ServiceCard({ id, title, titleAr, sellerName, rating, reviewCoun
             </div>
             <div className="text-end">
               <span className="text-[10px] text-muted-foreground block leading-none mb-0.5">بداية من</span>
-              <span className="text-base font-bold text-primary">${price}</span>
+              <span className="text-base font-bold text-primary">{price} DA</span>
             </div>
           </div>
         </div>

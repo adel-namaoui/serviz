@@ -55,7 +55,7 @@ export default async function FreelancerDashboard() {
     { icon: ShoppingBag, label: "إجمالي الطلبات", value: totalOrders,       color: "text-blue-500 bg-blue-500/10" },
     { icon: Clock,       label: "طلبات نشطة",      value: pendingCount,      color: "text-orange-500 bg-orange-500/10" },
     { icon: Package,     label: "خدماتي",           value: services.length,   color: "text-purple-500 bg-purple-500/10" },
-    { icon: DollarSign,  label: "الإيرادات",        value: `$${earnings.toFixed(0)}`, color: "text-emerald-500 bg-emerald-500/10" },
+    { icon: DollarSign,  label: "الإيرادات",        value: `${earnings.toFixed(0)} DA`, color: "text-emerald-500 bg-emerald-500/10" },
   ]
 
   return (
