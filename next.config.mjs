@@ -7,13 +7,7 @@ const nextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
-  // AJOUTEZ CES DEUX BLOCS ICI :
-  typescript: {
-    ignoreBuildErrors: true, // Permet de déployer même s'il y a des erreurs de type
-  },
-  eslint: {
-    ignoreDuringBuilds: true, // Permet de déployer même s'il y a des erreurs de lint
-  },
+  typescript: { ignoreBuildErrors: true },
+  eslint: { ignoreDuringBuilds: true },
 }
-
 export default nextConfig

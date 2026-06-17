@@ -37,6 +37,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   services      Service[]
   ordersAsBuyer Order[]   @relation("BuyerOrders")
+  reviews       Review[]
   sessions      Session[]
   accounts      Account[]
 }
@@ -114,7 +115,7 @@ model Service {
   isActive      Boolean     @default(true)
   images        String[]
   tags          String[]
-  rating        Float       @default(4.8)
+  rating        Float       @default(0)
   reviewCount   Int         @default(0)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -122,6 +123,7 @@ model Service {
   subCategory   SubCategory @relation(fields: [subCategoryId], references: [id])
   orders        Order[]
   packages      Package[]
+  reviews       Review[]
 }
 
 model Package {
@@ -148,4 +150,18 @@ model Order {
   updatedAt    DateTime    @updatedAt
   buyer        User        @relation("BuyerOrders", fields: [buyerId], references: [id])
   service      Service     @relation(fields: [serviceId], references: [id])
+  review       Review?
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  serviceId String
+  authorId  String
+  rating    Int      // 1–5
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id])
 }
