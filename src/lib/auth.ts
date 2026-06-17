@@ -41,7 +41,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
   },
-  pages: { signIn: "/auth/login" },
+  pages: { 
+    signIn: "/auth/login",
+  },
+  // Utilisez un seul nom de variable pour éviter les conflits
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   trustHost: true,
 })

@@ -1,53 +1,42 @@
+import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-import { getToken } from "next-auth/jwt"
 
-export async function middleware(req: NextRequest) {
-  // On utilise AUTH_SECRET en priorité
-  const token = await getToken({ 
-    req, 
-    secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET 
-  })
-  const path = req.nextUrl.pathname
+export default auth((req) => {
+  const { nextUrl } = req
+  const isLoggedIn = !!req.auth
+  const role = (req.auth?.user as any)?.role
 
-  // RÈGLE NOUVELLE : Si déjà connecté, interdit d'aller sur la page de LOGIN
-  // Cela évite de rester bloqué sur le formulaire alors qu'on est déjà Admin
-  if (token && path.startsWith("/auth/login")) {
-    return NextResponse.redirect(new URL("/dashboard", req.url))
+  // 1. Rediriger si déjà connecté et tente d'aller sur Login
+  if (isLoggedIn && nextUrl.pathname.startsWith("/auth/login")) {
+    return NextResponse.redirect(new URL("/dashboard", nextUrl))
   }
 
-  // 1. Protection Admin
-  if (path.startsWith("/admin")) {
-    if (!token) return NextResponse.redirect(new URL("/auth/login", req.url))
-    if (token.role !== "ADMIN") return NextResponse.redirect(new URL("/", req.url))
+  // 2. Protection Admin
+  if (nextUrl.pathname.startsWith("/admin")) {
+    if (!isLoggedIn) return NextResponse.redirect(new URL("/auth/login", nextUrl))
+    if (role !== "ADMIN") return NextResponse.redirect(new URL("/", nextUrl))
   }
 
-  // 2. Protection Freelancer
-  if (path.startsWith("/dashboard/freelancer")) {
-    if (!token) return NextResponse.redirect(new URL("/auth/login", req.url))
-    if (token.role !== "FREELANCER") return NextResponse.redirect(new URL("/", req.url))
+  // 3. Protection Freelancer
+  if (nextUrl.pathname.startsWith("/dashboard/freelancer")) {
+    if (!isLoggedIn) return NextResponse.redirect(new URL("/auth/login", nextUrl))
+    if (role !== "FREELANCER") return NextResponse.redirect(new URL("/", nextUrl))
   }
 
-  // 3. Protection Pages Utilisateurs (Checkout, Profil, Orders, Dashboard)
-  const protectedPaths = ["/checkout", "/orders", "/profile", "/dashboard"]
-  if (protectedPaths.some(r => path.startsWith(r))) {
-    if (!token) {
-      const url = new URL("/auth/login", req.url)
-      url.searchParams.set("from", path)
-      return NextResponse.redirect(url)
-    }
+  // 4. Protection Pages Utilisateurs (Orders, Profile, Checkout)
+  const isProtected = ["/profile", "/orders", "/checkout", "/dashboard"].some(path => 
+    nextUrl.pathname.startsWith(path)
+  )
+  
+  if (isProtected && !isLoggedIn) {
+    const loginUrl = new URL("/auth/login", nextUrl)
+    loginUrl.searchParams.set("from", nextUrl.pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   return NextResponse.next()
-}
+})
 
-export const config = { 
-  matcher: [
-    "/admin/:path*", 
-    "/checkout", 
-    "/orders/:path*", 
-    "/profile/:path*", 
-    "/dashboard/:path*",
-    "/auth/login" // On ajoute le login au matcher pour la nouvelle règle
-  ] 
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 }
