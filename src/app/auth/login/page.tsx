@@ -22,14 +22,23 @@ function LoginForm() {
     e.preventDefault()
     setLoading(true); setError("")
     
-    // On enlève redirect: false
-    // On laisse NextAuth faire une redirection complète (Full Page Reload)
-    // C'est ce qui évite que le bouton ne reste bloqué
-    await signIn("credentials", { 
-      email: email.trim(), 
-      password, 
-      callbackUrl: from === "/" ? "/dashboard" : from 
-    })
+    try {
+      // On ajoute ": any" pour corriger l'erreur TypeScript
+      const result: any = await signIn("credentials", { 
+        email: email.trim(), 
+        password, 
+        callbackUrl: from === "/" ? "/dashboard" : from,
+      })
+
+      // En mode redirection automatique, ce code ne s'exécute que s'il y a une erreur
+      if (result?.error) {
+        setError("البريد الإلكتروني أو كلمة المرور غير صحيحة")
+        setLoading(false)
+      }
+    } catch (err) {
+      // Si une erreur grave survient
+      setLoading(false)
+    }
   }
   
   return (
