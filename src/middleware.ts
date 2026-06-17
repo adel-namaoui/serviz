@@ -1,42 +1,49 @@
-import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import { getToken } from "next-auth/jwt"
 
-export default auth((req) => {
-  const { nextUrl } = req
-  const isLoggedIn = !!req.auth
-  const role = (req.auth?.user as any)?.role
+export async function middleware(req: NextRequest) {
+  // ── THE CORE FIX ─────────────────────────────────────────────
+  // Vercel env has AUTH_SECRET, local has NEXTAUTH_SECRET.
+  // Read both so it works in all environments.
+  const secret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET
 
-  // 1. Rediriger si déjà connecté et tente d'aller sur Login
-  if (isLoggedIn && nextUrl.pathname.startsWith("/auth/login")) {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl))
+  // NextAuth v5 beta cookie names differ by protocol:
+  //   HTTPS (Vercel production) → "__Secure-authjs.session-token"
+  //   HTTP  (localhost)         → "authjs.session-token"
+  // We try the secure name first, fall back to plain name.
+  const isSecure = req.url.startsWith("https://")
+  const cookieName = isSecure
+    ? "__Secure-authjs.session-token"
+    : "authjs.session-token"
+
+  const token = await getToken({ req, secret, cookieName })
+
+  const path = req.nextUrl.pathname
+
+  if (path.startsWith("/admin")) {
+    if (!token) return NextResponse.redirect(new URL("/auth/login", req.url))
+    if (token.role !== "ADMIN") return NextResponse.redirect(new URL("/", req.url))
   }
 
-  // 2. Protection Admin
-  if (nextUrl.pathname.startsWith("/admin")) {
-    if (!isLoggedIn) return NextResponse.redirect(new URL("/auth/login", nextUrl))
-    if (role !== "ADMIN") return NextResponse.redirect(new URL("/", nextUrl))
-  }
-
-  // 3. Protection Freelancer
-  if (nextUrl.pathname.startsWith("/dashboard/freelancer")) {
-    if (!isLoggedIn) return NextResponse.redirect(new URL("/auth/login", nextUrl))
-    if (role !== "FREELANCER") return NextResponse.redirect(new URL("/", nextUrl))
-  }
-
-  // 4. Protection Pages Utilisateurs (Orders, Profile, Checkout)
-  const isProtected = ["/profile", "/orders", "/checkout", "/dashboard"].some(path => 
-    nextUrl.pathname.startsWith(path)
-  )
-  
-  if (isProtected && !isLoggedIn) {
-    const loginUrl = new URL("/auth/login", nextUrl)
-    loginUrl.searchParams.set("from", nextUrl.pathname)
-    return NextResponse.redirect(loginUrl)
+  const protectedPaths = ["/checkout", "/orders", "/profile", "/dashboard"]
+  if (protectedPaths.some(r => path.startsWith(r))) {
+    if (!token) {
+      return NextResponse.redirect(
+        new URL(`/auth/login?from=${encodeURIComponent(path)}`, req.url)
+      )
+    }
   }
 
   return NextResponse.next()
-})
+}
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/admin/:path*",
+    "/checkout",
+    "/orders/:path*",
+    "/profile/:path*",
+    "/dashboard/:path*",
+  ],
 }

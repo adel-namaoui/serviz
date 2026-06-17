@@ -1,50 +1,67 @@
 import NextAuth from "next-auth"
-import { PrismaAdapter } from "@auth/prisma-adapter"
 import Credentials from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
 
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+})
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
+  trustHost: true,
+
   providers: [
     Credentials({
       async authorize(credentials) {
-        const user = await prisma.user.findUnique({ 
-          where: { email: (credentials.email as string).trim() } 
-        })
-        if (!user || !user.passwordHash) return null
-        
-        const isPasswordOk = await bcrypt.compare(credentials.password as string, user.passwordHash)
-        if (!isPasswordOk) return null
+        const p = schema.safeParse(credentials)
+        if (!p.success) return null
 
-        return { id: user.id, name: user.name, email: user.email, role: user.role }
+        const user = await prisma.user.findUnique({
+          where: { email: p.data.email },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true,
+            passwordHash: true,
+          },
+        })
+
+        if (!user?.passwordHash) return null
+        const ok = await bcrypt.compare(p.data.password, user.passwordHash)
+        if (!ok) return null
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image ?? null,
+          role: user.role,
+        }
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
-      if (user) { 
-        // CORRECTION ICI : On ajoute "as string"
-        token.id = user.id as string 
-        token.role = (user as any).role as string
+      if (user) {
+        token.id   = user.id ?? ""
+        token.role = (user as any).role ?? "CLIENT"
       }
       return token
     },
     async session({ session, token }) {
-      if (token && session.user) { 
-        // CORRECTION ICI : On ajoute "as string"
-        session.user.id = token.id as string
-        ;(session.user as any).role = token.role as string 
+      if (token) {
+        session.user.id   = token.id
+        session.user.role = token.role
       }
       return session
     },
   },
-  pages: { 
-    signIn: "/auth/login",
-  },
-  // Utilisez un seul nom de variable pour éviter les conflits
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
-  trustHost: true,
+
+  pages: { signIn: "/auth/login" },
 })
