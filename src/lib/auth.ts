@@ -4,6 +4,8 @@ import Credentials from "next-auth/providers/credentials"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
+import { skipCSRFCheck } from "@auth/core"
+
 
 const schema = z.object({ 
   email: z.string().email(), 
@@ -62,6 +64,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   trustHost: true, // AJOUTEZ CETTE LIGNE
-  skipCSRFCheck: true, // Force le passage sur Vercel
+  skipCSRFCheck, // <--- MODIFIEZ LA LIGNE ICI (on passe la variable importée)
 
 })
