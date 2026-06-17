@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import * as Icons from "lucide-react"

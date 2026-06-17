@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 import { prisma } from "@/lib/prisma"
 import { ServiceCard } from "@/components/marketplace/ServiceCard"
 import { Search } from "lucide-react"
