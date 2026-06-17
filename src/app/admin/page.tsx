@@ -82,7 +82,8 @@ export default async function AdminPage() {
     { icon: Users,       label: "المستخدمون",   value: userCount,              color: "text-blue-500 bg-blue-500/10" },
     { icon: Package,     label: "الخدمات",       value: serviceCount,           color: "text-purple-500 bg-purple-500/10" },
     { icon: ShoppingCart,label: "الطلبات",       value: orderCount,             color: "text-orange-500 bg-orange-500/10" },
-    { icon: DollarSign,  label: "الإيرادات",     value: `$${totalRevenue.toFixed(0)} DA`, color: "text-emerald-500 bg-emerald-500/10" },
+    // CORRECTION ICI : DA au lieu de $
+    { icon: DollarSign,  label: "الإيرادات",     value: `${totalRevenue.toFixed(0)} DA`, color: "text-emerald-500 bg-emerald-500/10" },
   ]
 
   return (
@@ -92,7 +93,7 @@ export default async function AdminPage() {
         <div className="container py-8 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-xl font-bold">لوحة تحكم المدير</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">نظرة شاملة على منصة سيرفيز</p>
+            <p className="text-sm text-muted-foreground mt-0.5">نظرة شاملة على منصة BrandDZ</p>
           </div>
           <Link href="/" className="px-4 py-2 rounded-xl border border-border text-sm hover:bg-secondary transition-all">
             تصفح الموقع ←

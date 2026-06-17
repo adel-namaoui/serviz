@@ -18,12 +18,13 @@ function LoginForm() {
   // Correction de la redirection : on s'assure d'aller au bon endroit après le login
   const from = sp.get("from") ?? "/dashboard" 
 
-   async function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true); setError("")
     
-    // On laisse NextAuth rediriger lui-même vers le 'from' ou le dashboard
-    // Cela force le navigateur à créer proprement le cookie
+    // On enlève redirect: false
+    // On laisse NextAuth faire une redirection complète (Full Page Reload)
+    // C'est ce qui évite que le bouton ne reste bloqué
     await signIn("credentials", { 
       email: email.trim(), 
       password, 
