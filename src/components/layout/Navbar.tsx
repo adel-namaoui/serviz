@@ -1,5 +1,6 @@
 "use client"
 import Link from "next/link"
+import NextImage from "next/image" // On le renomme en 'NextImage'
 import { useRouter } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 import { useTheme } from "next-themes"
@@ -9,8 +10,7 @@ import {
   ShoppingBag, LogOut, Menu, X, ChevronDown,
   TrendingUp, Package
 } from "lucide-react"
-import { cn } from "@/lib/utils"
-
+import { cn } from "@/lib/utils" 
 export function Navbar() {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
@@ -54,8 +54,15 @@ export function Navbar() {
     )}>
       <div className="container flex h-16 items-center gap-3">
         {/* Logo */}
-        <Link href="/" className="shrink-0 font-bold text-2xl tracking-tight select-none">
-          <span>S</span><span className="text-primary">Z</span>
+        <Link href="/" className="shrink-0 flex items-center select-none">
+          <NextImage 
+            src="/logo.png" 
+            alt="BrandDZ Logo" 
+            width={150} 
+            height={40} 
+            className="h-10 w-auto object-contain" 
+            priority 
+          />
         </Link>
 
         {/* Nav links */}
