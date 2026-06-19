@@ -3,6 +3,7 @@ import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { CheckCircle2, Clock, ArrowLeft } from "lucide-react"
+import { formatPrice } from "@/lib/utils"
 
 export const metadata = { title: "تأكيد الطلب" }
 
@@ -77,7 +78,7 @@ export default async function OrderPage({
               <Clock className="h-4 w-4" />
               {new Date(order.createdAt).toLocaleDateString("ar-DZ", { dateStyle: "long" })}
             </div>
-            <span className="text-xl font-bold text-primary">${order.totalPrice}</span>
+            <span className="text-xl font-bold text-primary">{formatPrice(order.totalPrice)}</span>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { ChevronLeft, Clock, RefreshCw, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
+import { formatPrice } from "@/lib/utils"
 import { CheckoutForm } from "@/components/marketplace/CheckoutForm"
 
 export const metadata = { title: "تأكيد الطلب" }
@@ -81,7 +82,7 @@ export default async function CheckoutPage({
             
             <div className="flex items-center justify-between border-t border-border pt-3">
               <span className="text-muted-foreground text-sm">المجموع</span>
-              <span className="text-2xl font-bold text-primary">{price} DA</span>
+              <span className="text-2xl font-bold text-primary">{formatPrice(price)}</span>
             </div>
           </div>
 

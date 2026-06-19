@@ -3,7 +3,7 @@ import Link from "next/link"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { Package, Clock, Star } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 import { ReviewForm } from "@/components/marketplace/ReviewForm"
 
 export const metadata = { title: "طلباتي" }
@@ -83,7 +83,7 @@ export default async function OrdersPage() {
                     <span className={cn("px-2.5 py-1 rounded-full text-xs font-semibold border", st.bg, st.color)}>
                       {st.label}
                     </span>
-                    <p className="text-xs text-muted-foreground mt-1.5">{order.totalPrice} DA</p>
+                    <p className="text-xs text-muted-foreground mt-1.5">{formatPrice(order.totalPrice)}</p>
                   </div>
                 </div>
 

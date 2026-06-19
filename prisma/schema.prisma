@@ -1,4 +1,4 @@
-// Version 2.0 - Fix Deployment
+// Version 2.2 - Added Performance Indexes
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
@@ -124,6 +124,9 @@ model Service {
   orders        Order[]
   packages      Package[]
   reviews       Review[]
+
+  @@index([sellerId])      // Index pour charger "Mes Services"
+  @@index([subCategoryId]) // Index pour charger les catégories
 }
 
 model Package {
@@ -136,6 +139,8 @@ model Package {
   revisions    Int
   features     String[]
   service      Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  
+  @@index([serviceId])
 }
 
 model Order {
@@ -151,6 +156,10 @@ model Order {
   buyer        User        @relation("BuyerOrders", fields: [buyerId], references: [id])
   service      Service     @relation(fields: [serviceId], references: [id])
   review       Review?
+
+  @@index([buyerId])   // Index CRUCIAL pour "Mes Achats"
+  @@index([serviceId]) // Index CRUCIAL pour les ventes du Freelancer
+  @@index([status])    // Index pour filtrer par statut
 }
 
 model Review {
@@ -164,4 +173,7 @@ model Review {
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   author    User     @relation(fields: [authorId], references: [id])
+
+  @@index([serviceId])
+  @@index([authorId])
 }

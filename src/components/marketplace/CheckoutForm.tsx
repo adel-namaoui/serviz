@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
+import { formatPrice } from "@/lib/utils"
 
 export function CheckoutForm({ serviceId, packageId, price }: { serviceId: string; packageId?: string; price: number }) {
   const [req, setReq] = useState("")
@@ -31,12 +32,12 @@ export function CheckoutForm({ serviceId, packageId, price }: { serviceId: strin
       </div>
       {error && <p className="text-sm text-destructive text-center">{error}</p>}
       <div className="bg-card border border-border rounded-xl p-4 space-y-2">
-        <div className="flex justify-between text-sm"><span className="text-muted-foreground">الخدمة</span><span className="font-medium">${price}</span></div>
+        <div className="flex justify-between text-sm"><span className="text-muted-foreground">الخدمة</span><span className="font-medium">{formatPrice(price)}</span></div>
         <div className="flex justify-between text-sm"><span className="text-muted-foreground">رسوم المنصة</span><span className="text-success font-medium">مجاناً</span></div>
-        <div className="flex justify-between font-bold border-t border-border pt-2 mt-1"><span>الإجمالي</span><span className="text-primary text-lg">${price}</span></div>
+        <div className="flex justify-between font-bold border-t border-border pt-2 mt-1"><span>الإجمالي</span><span className="text-primary text-lg">{formatPrice(price)}</span></div>
       </div>
       <button type="submit" disabled={loading} className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 disabled:opacity-50 transition-all flex items-center justify-center gap-2">
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />} تأكيد الطلب — ${price}
+        {loading && <Loader2 className="h-4 w-4 animate-spin" />} تأكيد الطلب — {formatPrice(price)}
       </button>
       <p className="text-xs text-muted-foreground text-center">بالضغط على تأكيد الطلب، أنت توافق على شروط الاستخدام</p>
     </form>

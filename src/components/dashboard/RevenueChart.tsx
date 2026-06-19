@@ -1,6 +1,7 @@
 "use client"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { useTheme } from "next-themes"
+import { formatPrice } from "@/lib/utils"
 
 interface Props { data: { month: string; revenue: number }[] }
 
@@ -26,8 +27,7 @@ export function RevenueChart({ data }: Props) {
           tick={{ fill: textColor, fontSize: 11 }}
           axisLine={false}
           tickLine={false}
-          // CORRECTION ICI : DA au lieu de $
-          tickFormatter={(v: any) => `${v} DA`}
+          tickFormatter={(v: any) => formatPrice(v)}
         />
         <Tooltip
             contentStyle={{
@@ -38,8 +38,7 @@ export function RevenueChart({ data }: Props) {
                 fontSize: 13,
             }}
             labelStyle={{ color: isDark ? "#e2e8f0" : "#1a202c", fontWeight: 600, marginBottom: 4 }}
-            // CORRECTION ICI : DA au lieu de $
-            formatter={(v: any) => [`${v} DA`, "إيرادات"] as [string, string]}
+            formatter={(v: any) => [formatPrice(v), "إيرادات"] as [string, string]}
             cursor={{ fill: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)" }}
         />
         <Bar dataKey="revenue" fill={barColor} radius={[8, 8, 0, 0]} maxBarSize={52} />

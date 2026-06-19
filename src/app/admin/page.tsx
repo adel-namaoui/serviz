@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { Users, Package, ShoppingCart, TrendingUp, DollarSign } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 import { RevenueChart } from "@/components/dashboard/RevenueChart"
 import { UserTable } from "@/components/dashboard/UserTable"
 
@@ -82,8 +82,7 @@ export default async function AdminPage() {
     { icon: Users,       label: "المستخدمون",   value: userCount,              color: "text-blue-500 bg-blue-500/10" },
     { icon: Package,     label: "الخدمات",       value: serviceCount,           color: "text-purple-500 bg-purple-500/10" },
     { icon: ShoppingCart,label: "الطلبات",       value: orderCount,             color: "text-orange-500 bg-orange-500/10" },
-    // CORRECTION ICI : DA au lieu de $
-    { icon: DollarSign,  label: "الإيرادات",     value: `${totalRevenue.toFixed(0)} DA`, color: "text-emerald-500 bg-emerald-500/10" },
+    { icon: DollarSign,  label: "الإيرادات",     value: formatPrice(totalRevenue), color: "text-emerald-500 bg-emerald-500/10" },
   ]
 
   return (
@@ -124,7 +123,7 @@ export default async function AdminPage() {
             </div>
             <div className="flex items-center gap-1.5 text-sm font-semibold text-primary">
               <TrendingUp className="h-4 w-4" />
-              ${totalRevenue.toFixed(0)} DA إجمالي
+              {formatPrice(totalRevenue)} إجمالي
             </div>
           </div>
           <RevenueChart data={chartData} />
@@ -150,7 +149,7 @@ export default async function AdminPage() {
                       <td className="px-4 py-3 text-xs max-w-[180px]"><p className="line-clamp-1">{o.service.titleAr ?? o.service.title}</p></td>
                       <td className="px-4 py-3 text-xs">{o.buyer.name}</td>
                       <td className="px-4 py-3"><span className={cn("text-xs font-semibold", statusColors[o.status])}>{statusLabels[o.status]}</span></td>
-                      <td className="px-4 py-3 text-xs font-bold text-primary">{o.totalPrice} DA</td>
+                      <td className="px-4 py-3 text-xs font-bold text-primary">{formatPrice(o.totalPrice)}</td>
                       <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{new Date(o.createdAt).toLocaleDateString("fr-DZ")}</td>
                     </tr>
                   ))}

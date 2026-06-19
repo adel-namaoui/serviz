@@ -1,69 +1,39 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { z } from "zod"
 
-// Helper pour vérifier si l'utilisateur est Admin
-async function isAdmin() {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
   const session = await auth()
-  if (!session?.user?.id) return false
-  const user = await prisma.user.findUnique({ 
-    where: { id: session.user.id },
-    select: { role: true }
-  })
-  return user?.role === "ADMIN"
-}
-
-// 1. SUPPRIMER UN UTILISATEUR
-export async function DELETE(
-  _req: NextRequest, 
-  { params }: { params: Promise<{ userId: string }> }
-) {
-  if (!(await isAdmin())) {
-    return NextResponse.json({ error: "غير مصرح لك" }, { status: 403 })
-  }
+  if (session?.user?.role !== "ADMIN") return NextResponse.json({ error: "Unauthorized" }, { status: 403 })
 
   const { userId } = await params
 
   try {
-    const target = await prisma.user.findUnique({ where: { id: userId } })
-    if (!target) return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 404 })
-    if (target.role === "ADMIN") return NextResponse.json({ error: "لا يمكن حذف مدير آخر" }, { status: 422 })
+    // ORDRE DE SUPPRESSION CRUCIAL (Transaction)
+    await prisma.$transaction([
+      // 1. Supprimer les avis (ceux écrits par lui ET ceux sur ses services)
+      prisma.review.deleteMany({ where: { OR: [{ authorId: userId }, { service: { sellerId: userId } }] } }),
+      
+      // 2. Supprimer les commandes (celles qu'il a achetées ET celles qu'il a vendues)
+      prisma.order.deleteMany({ where: { OR: [{ buyerId: userId }, { service: { sellerId: userId } }] } }),
+      
+      // 3. Supprimer les packages de ses services
+      prisma.package.deleteMany({ where: { service: { sellerId: userId } } }),
+      
+      // 4. Supprimer ses services
+      prisma.service.deleteMany({ where: { sellerId: userId } }),
+      
+      // 5. Supprimer ses sessions et comptes auth
+      prisma.account.deleteMany({ where: { userId: userId } }),
+      prisma.session.deleteMany({ where: { userId: userId } }),
+      
+      // 6. ENFIN, supprimer l'utilisateur
+      prisma.user.delete({ where: { id: userId } }),
+    ])
 
-    await prisma.user.delete({ where: { id: userId } })
     return NextResponse.json({ success: true })
   } catch (e) {
-    return NextResponse.json({ error: "خطأ في حذف المستخدم" }, { status: 500 })
-  }
-}
-
-// 2. CHANGER LE RÔLE D'UN UTILISATEUR
-const promoteSchema = z.object({ 
-  role: z.enum(["CLIENT", "FREELANCER", "ADMIN"]) 
-})
-
-export async function PATCH(
-  req: NextRequest, 
-  { params }: { params: Promise<{ userId: string }> }
-) {
-  if (!(await isAdmin())) {
-    return NextResponse.json({ error: "غير مصرح لك" }, { status: 403 })
-  }
-
-  const { userId } = await params
-
-  try {
-    const body = await req.json()
-    const parsed = promoteSchema.safeParse(body)
-    if (!parsed.success) return NextResponse.json({ error: "دور غير صالح" }, { status: 400 })
-
-    const updated = await prisma.user.update({
-      where: { id: userId },
-      data: { role: parsed.data.role },
-      select: { id: true, name: true, role: true },
-    })
-    return NextResponse.json(updated)
-  } catch (e) {
-    return NextResponse.json({ error: "خطأ في تحديث الدور" }, { status: 500 })
+    console.error("Erreur suppression fatale:", e)
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })
   }
 }
