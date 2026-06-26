@@ -7,6 +7,10 @@ const nextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
-  typescript: { ignoreBuildErrors: true },
-}
-export default nextConfig
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  // On a supprimé le bloc "eslint" qui causait l'erreur jaune
+};
+
+export default nextConfig;

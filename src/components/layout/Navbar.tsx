@@ -1,6 +1,5 @@
 "use client"
 import Link from "next/link"
-import NextImage from "next/image" // On le renomme en 'NextImage'
 import { useRouter } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 import { useTheme } from "next-themes"
@@ -11,10 +10,17 @@ import {
   TrendingUp, Package
 } from "lucide-react"
 import { cn } from "@/lib/utils" 
+
+// NOUVEAUX IMPORTS POUR LA LANGUE
+import { useTranslation } from "@/lib/locale-context"
+import { LanguageSwitcher } from "./LanguageSwitcher"
+
 export function Navbar() {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
+  const { t } = useTranslation() // Hook pour traduire
   const router = useRouter()
+  
   const [q, setQ] = useState("")
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -38,10 +44,13 @@ export function Navbar() {
 
   const search = (e: React.FormEvent) => {
     e.preventDefault()
-    if (q.trim()) { router.push(`/search?q=${encodeURIComponent(q.trim())}`); setMobileOpen(false) }
+    if (q.trim()) {
+      // On utilise router.push pour changer d'URL
+      router.push(`/search?q=${encodeURIComponent(q.trim())}`)
+      setMobileOpen(false)
+    }
   }
 
-  // Fix 2: Role-based menu separation
   const role = (session?.user as any)?.role
   const isFreelancer = role === "FREELANCER"
   const isAdmin      = role === "ADMIN"
@@ -54,26 +63,22 @@ export function Navbar() {
     )}>
       <div className="container flex h-16 items-center gap-3">
         {/* Logo */}
-        <Link href="/" className="shrink-0 flex items-center select-none">
-          <NextImage 
-            src="/logo.png" 
-            alt="BrandDZ Logo" 
-            width={150} 
-            height={40} 
-            className="h-10 w-auto object-contain" 
-            priority 
-          />
+        {/* Logo en texte stylisé */}
+        <Link href="/" className="shrink-0 flex items-center select-none group">
+          <span className="text-2xl font-black tracking-tighter italic transition-all group-hover:scale-105">
+            <span className="text-foreground">Brand</span>
+            <span className="text-primary">DZ</span>
+          </span>
         </Link>
 
         {/* Nav links */}
         <nav className="hidden md:flex items-center gap-1 mx-1">
           <Link href="/categories" className="px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
-            تصفح الخدمات
+            {t("nav.browse")}
           </Link>
-          {/* Fix 2: Only show "ابدأ البيع" to guests and clients */}
           {isClient && (
             <Link href="/sell" className="px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
-              ابدأ البيع
+              {t("nav.sell")}
             </Link>
           )}
         </nav>
@@ -83,7 +88,7 @@ export function Navbar() {
           <div className="relative w-full">
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <input
-              type="search" placeholder="ابحث عن خدمة..." value={q}
+              type="search" placeholder={t("nav.search")} value={q}
               onChange={e => setQ(e.target.value)}
               className="w-full h-9 pr-9 pl-3 rounded-xl text-sm bg-secondary border border-border placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             />
@@ -92,6 +97,10 @@ export function Navbar() {
 
         {/* Right side */}
         <div className="flex items-center gap-1 ml-auto">
+          
+          {/* SELECTEUR DE LANGUE */}
+          <LanguageSwitcher />
+
           {/* Theme toggle */}
           {mounted && (
             <button
@@ -121,56 +130,47 @@ export function Navbar() {
               {userOpen && (
                 <div className="absolute top-full mt-1.5 end-0 w-52 rounded-xl border border-border bg-popover shadow-xl shadow-black/10 overflow-hidden animate-fade-up z-50 py-1">
 
-                  {/* Fix 2: Admin menu */}
                   {isAdmin && (
                     <>
                       <Link href="/admin" onClick={() => setUserOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                        <LayoutDashboard className="h-4 w-4" /> لوحة التحكم
+                        <LayoutDashboard className="h-4 w-4" /> {t("nav.dashboard")}
                       </Link>
                       <div className="h-px bg-border/50 my-1" />
                     </>
                   )}
 
-                  {/* Fix 2: Freelancer menu — selling side only */}
                   {isFreelancer && (
                     <>
-                      <div className="px-3 py-1.5 text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider">
-                        لوحتي
-                      </div>
                       <Link href="/dashboard/freelancer" onClick={() => setUserOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                        <TrendingUp className="h-4 w-4" /> لوحة المستقل
+                        <TrendingUp className="h-4 w-4" /> {t("nav.myServices")}
                       </Link>
                       <Link href="/dashboard/new-service" onClick={() => setUserOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                        <Package className="h-4 w-4" /> إضافة خدمة
+                        <Package className="h-4 w-4" /> {t("nav.addService")}
                       </Link>
                       <div className="h-px bg-border/50 my-1" />
                     </>
                   )}
 
-                  {/* Fix 2: Client menu — buying side only */}
-                  {isClient && (
-                    <Link href="/profile/orders" onClick={() => setUserOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                      <ShoppingBag className="h-4 w-4" /> طلباتي
-                    </Link>
-                  )}
+                  <Link href="/profile/orders" onClick={() => setUserOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
+                    <ShoppingBag className="h-4 w-4" /> {t("nav.myOrders")}
+                  </Link>
 
                   <Link href="/profile" onClick={() => setUserOpen(false)}
                     className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                    <User className="h-4 w-4" /> حسابي
+                    <User className="h-4 w-4" /> {t("nav.profile")}
                   </Link>
 
                   <div className="h-px bg-border/50 my-1" />
 
-                  {/* Fix 3: signOut with redirect — no logout page */}
                   <button
                     onClick={() => { signOut({ callbackUrl: "/" }); setUserOpen(false) }}
                     className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-destructive hover:bg-destructive/8 transition-colors"
                   >
-                    <LogOut className="h-4 w-4" /> تسجيل الخروج
+                    <LogOut className="h-4 w-4" /> {t("nav.logout")}
                   </button>
                 </div>
               )}
@@ -179,11 +179,11 @@ export function Navbar() {
             <>
               <Link href="/auth/login"
                 className="hidden sm:flex h-9 px-3 items-center text-sm text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-all">
-                تسجيل الدخول
+                {t("nav.login")}
               </Link>
               <Link href="/auth/register"
                 className="h-9 px-4 flex items-center text-sm font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
-                إنشاء حساب
+                {t("nav.register")}
               </Link>
             </>
           )}
@@ -199,26 +199,36 @@ export function Navbar() {
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="sm:hidden border-t border-border bg-background animate-fade-up px-4 py-4 space-y-3">
+        <div className="sm:hidden border-t border-border bg-background animate-fade-up px-4 py-4 space-y-3 shadow-xl">
           <form onSubmit={search}>
             <div className="relative">
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input type="search" placeholder="ابحث عن خدمة..." value={q} onChange={e => setQ(e.target.value)}
+              <input type="search" placeholder={t("nav.search")} value={q} onChange={e => setQ(e.target.value)}
                 className="w-full h-10 pr-9 pl-3 rounded-xl text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/20" />
             </div>
           </form>
           <nav className="flex flex-col gap-1">
-            <Link href="/categories" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">تصفح الخدمات</Link>
+            <Link href="/categories" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">
+              {t("nav.browse")}
+            </Link>
             {isFreelancer && (
-              <Link href="/dashboard/freelancer" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">لوحة المستقل</Link>
+              <Link href="/dashboard/freelancer" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">
+                {t("nav.myServices")}
+              </Link>
             )}
-            {isClient && !session && (
-              <Link href="/sell" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">ابدأ البيع</Link>
+            {isClient && (
+              <Link href="/sell" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">
+                {t("nav.sell")}
+              </Link>
             )}
             {!session && (
               <>
-                <Link href="/auth/login" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">تسجيل الدخول</Link>
-                <Link href="/auth/register" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-xl text-sm text-center bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">إنشاء حساب</Link>
+                <Link href="/auth/login" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">
+                  {t("nav.login")}
+                </Link>
+                <Link href="/auth/register" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-xl text-sm text-center bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+                  {t("nav.register")}
+                </Link>
               </>
             )}
           </nav>
