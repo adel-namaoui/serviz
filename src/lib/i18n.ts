@@ -1,8 +1,6 @@
 // src/lib/i18n.ts
 // ─────────────────────────────────────────────────────────────
 // Central translation store for Arabic / French / English.
-// To add a new key: add it to the `Dict` type, then add the
-// translation in all 3 language objects below.
 // ─────────────────────────────────────────────────────────────
 
 export const locales = ["ar", "fr", "en"] as const
@@ -88,7 +86,7 @@ export type Dict = {
   "order.confirmedSubtitle": string
   "order.number": string
   "order.status.pending": string
-  "order.status.inProgress": string
+  "order.status.in_progress": string
   "order.status.revision": string
   "order.status.delivered": string
   "order.status.completed": string
@@ -279,7 +277,7 @@ export type Dict = {
 
 // ── Arabic translations ──────────────────────────────────────
 const ar: Dict = {
-  "site.name": "سيرفيز",
+  "site.name": "براند ديزاد",
   "site.tagline": "أكبر سوق للخدمات المصغرة في الجزائر",
 
   "nav.browse": "تصفح الخدمات",
@@ -343,7 +341,7 @@ const ar: Dict = {
   "order.confirmedSubtitle": "سيتواصل معك المستقل في أقرب وقت ممكن",
   "order.number": "رقم الطلب",
   "order.status.pending": "في الانتظار",
-  "order.status.inProgress": "جارٍ التنفيذ",
+  "order.status.in_progress": "جارٍ التنفيذ",
   "order.status.revision": "مراجعة",
   "order.status.delivered": "تم التسليم",
   "order.status.completed": "مكتمل",
@@ -356,7 +354,7 @@ const ar: Dict = {
   "auth.loginTitle": "مرحباً بعودتك",
   "auth.loginSubtitle": "سجّل دخولك للمتابعة",
   "auth.registerTitle": "إنشاء حساب جديد",
-  "auth.registerSubtitle": "انضم إلى مجتمع سيرفيز",
+  "auth.registerSubtitle": "انضم إلى مجتمع براند ديزاد",
   "auth.email": "البريد الإلكتروني",
   "auth.password": "كلمة المرور",
   "auth.name": "الاسم الكامل",
@@ -396,7 +394,7 @@ const ar: Dict = {
   "dash.hidden": "مخفي",
 
   "admin.title": "لوحة تحكم المدير",
-  "admin.subtitle": "نظرة شاملة على منصة سيرفيز",
+  "admin.subtitle": "نظرة شاملة على منصة براند ديزاد",
   "admin.users": "المستخدمون",
   "admin.services": "الخدمات",
   "admin.orders": "الطلبات",
@@ -432,7 +430,7 @@ const ar: Dict = {
   "newService.titleAr": "عنوان الخدمة (بالعربية)",
   "newService.titleFr": "عنوان الخدمة (بالفرنسية / الإنجليزية)",
   "newService.description": "وصف الخدمة",
-  "newService.price": "السعر (DZD)",
+  "newService.price": "السعر (DA)",
   "newService.delivery": "التسليم (أيام)",
   "newService.revisions": "التعديلات",
   "newService.category": "الفئة الرئيسية",
@@ -445,14 +443,14 @@ const ar: Dict = {
   "newService.packagesHint": "أضف باقات بأسعار مختلفة",
   "newService.addPackage": "إضافة باقة",
   "newService.packageName": "اسم الباقة",
-  "newService.packagePrice": "السعر (DZD)",
+  "newService.packagePrice": "السعر (DA)",
   "newService.packageDesc": "الوصف",
   "newService.packageFeatures": "المميزات",
   "newService.addFeature": "+ إضافة ميزة",
   "newService.publish": "نشر الخدمة",
   "newService.cancel": "إلغاء",
   "newService.selectCategory": "اختر فئة...",
-  "newService.selectSubCategory": "اختر فئة فرعية...",
+  "newService.selectSubCategory": "اختر فئة fer3ia...",
 
   "search.title": "نتائج البحث",
   "search.results": "خدمة",
@@ -460,7 +458,7 @@ const ar: Dict = {
   "search.noResultsSubtitle": "جرب تعديل الفلاتر أو استخدام كلمات مختلفة",
   "search.clearFilters": "مسح الفلاتر",
   "search.filterTitle": "الفلاتر والترتيب",
-  "search.priceRange": "نطاق السعر (DZD)",
+  "search.priceRange": "نطاق السعر (DA)",
   "search.deliveryTime": "مدة التسليم",
   "search.sortBy": "الترتيب",
   "search.sort.popular": "الأكثر طلباً",
@@ -475,8 +473,8 @@ const ar: Dict = {
   "search.activeFilters": "فلاتر نشطة:",
   "search.categories": "فئات مطابقة",
 
-  "sell.title": "ابدأ البيع على سيرفيز",
-  "sell.subtitle": "انضم إلى أكثر من 500 مستقل ناجح وابدأ في تحقيق دخل من مهاراتك",
+  "sell.title": "ابدأ البيع على براند ديزاد",
+  "sell.subtitle": "انضم إلى مئات المستقلين الناجحين وابدأ في تحقيق دخل من مهاراتك",
   "sell.cta": "إنشاء حساب مجاناً",
   "sell.step1.title": "أنشئ ملفك",
   "sell.step1.desc": "سجّل حسابك كمستقل وأضف مهاراتك في دقائق",
@@ -524,7 +522,7 @@ const ar: Dict = {
 
 // ── French translations ──────────────────────────────────────
 const fr: Dict = {
-  "site.name": "Serviz",
+  "site.name": "BrandDZ",
   "site.tagline": "La plus grande marketplace freelance d'Algérie",
 
   "nav.browse": "Parcourir",
@@ -588,7 +586,7 @@ const fr: Dict = {
   "order.confirmedSubtitle": "Le freelance vous contactera très prochainement",
   "order.number": "Numéro de commande",
   "order.status.pending": "En attente",
-  "order.status.inProgress": "En cours",
+  "order.status.in_progress": "En cours",
   "order.status.revision": "Révision",
   "order.status.delivered": "Livré",
   "order.status.completed": "Terminé",
@@ -601,7 +599,7 @@ const fr: Dict = {
   "auth.loginTitle": "Bon retour!",
   "auth.loginSubtitle": "Connectez-vous pour continuer",
   "auth.registerTitle": "Créer un compte",
-  "auth.registerSubtitle": "Rejoignez la communauté Serviz",
+  "auth.registerSubtitle": "Rejoignez la communauté BrandDZ",
   "auth.email": "Adresse e-mail",
   "auth.password": "Mot de passe",
   "auth.name": "Nom complet",
@@ -641,7 +639,7 @@ const fr: Dict = {
   "dash.hidden": "Masqué",
 
   "admin.title": "Tableau de bord Admin",
-  "admin.subtitle": "Vue d'ensemble de la plateforme Serviz",
+  "admin.subtitle": "Vue d'ensemble de la plateforme BrandDZ",
   "admin.users": "Utilisateurs",
   "admin.services": "Services",
   "admin.orders": "Commandes",
@@ -677,7 +675,7 @@ const fr: Dict = {
   "newService.titleAr": "Titre du service (en arabe)",
   "newService.titleFr": "Titre du service (en français / anglais)",
   "newService.description": "Description du service",
-  "newService.price": "Prix (DZD)",
+  "newService.price": "Prix (DA)",
   "newService.delivery": "Délai (jours)",
   "newService.revisions": "Révisions",
   "newService.category": "Catégorie principale",
@@ -690,7 +688,7 @@ const fr: Dict = {
   "newService.packagesHint": "Ajoutez des forfaits à prix différents",
   "newService.addPackage": "Ajouter un forfait",
   "newService.packageName": "Nom du forfait",
-  "newService.packagePrice": "Prix (DZD)",
+  "newService.packagePrice": "Prix (DA)",
   "newService.packageDesc": "Description",
   "newService.packageFeatures": "Fonctionnalités",
   "newService.addFeature": "+ Ajouter une fonctionnalité",
@@ -705,7 +703,7 @@ const fr: Dict = {
   "search.noResultsSubtitle": "Essayez de modifier les filtres ou d'utiliser d'autres mots",
   "search.clearFilters": "Effacer les filtres",
   "search.filterTitle": "Filtres et tri",
-  "search.priceRange": "Fourchette de prix (DZD)",
+  "search.priceRange": "Fourchette de prix (DA)",
   "search.deliveryTime": "Délai de livraison",
   "search.sortBy": "Trier par",
   "search.sort.popular": "Plus populaires",
@@ -720,8 +718,8 @@ const fr: Dict = {
   "search.activeFilters": "Filtres actifs:",
   "search.categories": "Catégories correspondantes",
 
-  "sell.title": "Commencer à vendre sur Serviz",
-  "sell.subtitle": "Rejoignez plus de 500 freelances qui gagnent leur vie grâce à leurs compétences",
+  "sell.title": "Commencer à vendre sur BrandDZ",
+  "sell.subtitle": "Rejoignez des centaines de freelances qui gagnent leur vie grâce à leurs compétences",
   "sell.cta": "Créer un compte gratuit",
   "sell.step1.title": "Créez votre profil",
   "sell.step1.desc": "Inscrivez-vous en tant que freelance et ajoutez vos compétences en quelques minutes",
@@ -769,7 +767,7 @@ const fr: Dict = {
 
 // ── English translations ──────────────────────────────────────
 const en: Dict = {
-  "site.name": "Serviz",
+  "site.name": "BrandDZ",
   "site.tagline": "Algeria's largest freelance marketplace",
 
   "nav.browse": "Browse",
@@ -833,7 +831,7 @@ const en: Dict = {
   "order.confirmedSubtitle": "The freelancer will contact you soon",
   "order.number": "Order Number",
   "order.status.pending": "Pending",
-  "order.status.inProgress": "In Progress",
+  "order.status.in_progress": "In Progress",
   "order.status.revision": "Revision",
   "order.status.delivered": "Delivered",
   "order.status.completed": "Completed",
@@ -846,7 +844,7 @@ const en: Dict = {
   "auth.loginTitle": "Welcome back",
   "auth.loginSubtitle": "Log in to continue",
   "auth.registerTitle": "Create an account",
-  "auth.registerSubtitle": "Join the Serviz community",
+  "auth.registerSubtitle": "Join the BrandDZ community",
   "auth.email": "Email address",
   "auth.password": "Password",
   "auth.name": "Full name",
@@ -922,7 +920,7 @@ const en: Dict = {
   "newService.titleAr": "Service title (in Arabic)",
   "newService.titleFr": "Service title (in French / English)",
   "newService.description": "Service description",
-  "newService.price": "Price (DZD)",
+  "newService.price": "Price (DA)",
   "newService.delivery": "Delivery (days)",
   "newService.revisions": "Revisions",
   "newService.category": "Main category",
@@ -935,7 +933,7 @@ const en: Dict = {
   "newService.packagesHint": "Add packages at different price points",
   "newService.addPackage": "Add Package",
   "newService.packageName": "Package name",
-  "newService.packagePrice": "Price (DZD)",
+  "newService.packagePrice": "Price (DA)",
   "newService.packageDesc": "Description",
   "newService.packageFeatures": "Features",
   "newService.addFeature": "+ Add feature",
@@ -950,7 +948,7 @@ const en: Dict = {
   "search.noResultsSubtitle": "Try adjusting filters or using different keywords",
   "search.clearFilters": "Clear filters",
   "search.filterTitle": "Filters & Sorting",
-  "search.priceRange": "Price range (DZD)",
+  "search.priceRange": "Price range (DA)",
   "search.deliveryTime": "Delivery time",
   "search.sortBy": "Sort by",
   "search.sort.popular": "Most popular",
@@ -965,8 +963,8 @@ const en: Dict = {
   "search.activeFilters": "Active filters:",
   "search.categories": "Matching categories",
 
-  "sell.title": "Start Selling on Serviz",
-  "sell.subtitle": "Join 500+ successful freelancers earning from their skills",
+  "sell.title": "Start Selling on BrandDZ",
+  "sell.subtitle": "Join hundreds of successful freelancers earning from their skills",
   "sell.cta": "Create Free Account",
   "sell.step1.title": "Create your profile",
   "sell.step1.desc": "Sign up as a freelancer and add your skills in minutes",
@@ -1018,4 +1016,3 @@ export const translations: Record<Locale, Dict> = { ar, fr, en }
 export function getDict(locale: Locale): Dict {
   return translations[locale] ?? translations[defaultLocale]
 }
-

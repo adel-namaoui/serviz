@@ -87,7 +87,11 @@ export default function AdminClient({
                       <td className="px-4 py-3 text-xs font-medium">{o.service.titleAr || o.service.title}</td>
                       <td className="px-4 py-3 text-xs">{o.buyer.name}</td>
                       <td className="px-4 py-3">
-                        <span className={cn("text-xs font-semibold", statusColors[o.status])}>
+                        <span className={cn(
+                          "text-xs font-semibold", 
+                          statusColors[o.status] || "text-muted-foreground"
+                        )}>
+                          {/* On s'assure que la clé correspond bien au dictionnaire */}
                           {t(`order.status.${o.status.toLowerCase()}` as any)}
                         </span>
                       </td>

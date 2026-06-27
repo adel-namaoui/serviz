@@ -1,6 +1,5 @@
 "use client"
 import Link from "next/link"
-import NextImage from "next/image" // On le renomme en 'NextImage'
 import { useRouter } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 import { useTheme } from "next-themes"
@@ -8,13 +7,20 @@ import { useState, useEffect, useRef } from "react"
 import {
   Search, Sun, Moon, User, LayoutDashboard,
   ShoppingBag, LogOut, Menu, X, ChevronDown,
-  TrendingUp, Package
+  TrendingUp, Package, Settings
 } from "lucide-react"
 import { cn } from "@/lib/utils" 
+
+// Imports pour la langue
+import { useTranslation } from "@/lib/locale-context"
+import { LanguageSwitcher } from "./LanguageSwitcher"
+
 export function Navbar() {
   const { data: session } = useSession()
   const { theme, setTheme } = useTheme()
+  const { t, locale } = useTranslation() // Hook de traduction
   const router = useRouter()
+  
   const [q, setQ] = useState("")
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -23,11 +29,15 @@ export function Navbar() {
   const userRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => { setMounted(true) }, [])
+  
+  // Gestion du scroll pour l'effet "glass"
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 4)
+    const fn = () => setScrolled(window.scrollY > 10)
     window.addEventListener("scroll", fn, { passive: true })
     return () => window.removeEventListener("scroll", fn)
   }, [])
+
+  // Fermer le menu utilisateur si on clique ailleurs
   useEffect(() => {
     const fn = (e: MouseEvent) => {
       if (userRef.current && !userRef.current.contains(e.target as Node)) setUserOpen(false)
@@ -38,68 +48,68 @@ export function Navbar() {
 
   const search = (e: React.FormEvent) => {
     e.preventDefault()
-    if (q.trim()) { router.push(`/search?q=${encodeURIComponent(q.trim())}`); setMobileOpen(false) }
+    if (q.trim()) {
+      router.push(`/search?q=${encodeURIComponent(q.trim())}`)
+      setMobileOpen(false)
+    }
   }
 
-  // Fix 2: Role-based menu separation
   const role = (session?.user as any)?.role
   const isFreelancer = role === "FREELANCER"
   const isAdmin      = role === "ADMIN"
-  const isClient     = role === "CLIENT" || !role
 
   return (
     <header className={cn(
-      "sticky top-0 z-50 w-full transition-all duration-200",
-      scrolled ? "glass shadow-sm" : "bg-background border-b border-border/50"
+      "sticky top-0 z-50 w-full transition-all duration-300",
+      scrolled ? "bg-background/80 backdrop-blur-md shadow-sm border-b border-border/50 py-2" : "bg-background border-b border-transparent py-4"
     )}>
-      <div className="container flex h-16 items-center gap-3">
-        {/* Logo */}
-        <Link href="/" className="shrink-0 flex items-center select-none">
-          <NextImage 
-            src="/logo.png" 
-            alt="BrandDZ Logo" 
-            width={150} 
-            height={40} 
-            className="h-10 w-auto object-contain" 
-            priority 
-          />
+      <div className="container flex h-10 items-center gap-4">
+        
+        {/* LOGO EN TEXTE STYLISÉ */}
+        <Link href="/" className="shrink-0 flex items-center select-none group">
+          <span className="text-2xl font-black tracking-tighter italic transition-all group-hover:scale-105">
+            <span className="text-foreground">Brand</span>
+            <span className="text-primary">DZ</span>
+          </span>
         </Link>
 
-        {/* Nav links */}
-        <nav className="hidden md:flex items-center gap-1 mx-1">
-          <Link href="/categories" className="px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
-            تصفح الخدمات
+        {/* Liens de navigation (Traduits) */}
+        <nav className="hidden md:flex items-center gap-1 mx-2">
+          <Link href="/categories" className="px-3 py-1.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all">
+            {t("nav.browse")}
           </Link>
-          {/* Fix 2: Only show "ابدأ البيع" to guests and clients */}
-          {isClient && (
-            <Link href="/sell" className="px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-all">
-              ابدأ البيع
+          {!isFreelancer && !isAdmin && (
+            <Link href="/sell" className="px-3 py-1.5 rounded-xl text-sm font-bold text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all">
+              {t("nav.sell")}
             </Link>
           )}
         </nav>
 
-        {/* Search */}
-        <form onSubmit={search} className="hidden sm:flex flex-1 max-w-sm lg:max-w-md">
-          <div className="relative w-full">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+        {/* Barre de recherche (Placeholder traduit) */}
+        <form onSubmit={search} className="hidden lg:flex flex-1 max-w-md mx-4">
+          <div className="relative w-full group">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input
-              type="search" placeholder="ابحث عن خدمة..." value={q}
+              type="search" 
+              placeholder={t("nav.search")} 
+              value={q}
               onChange={e => setQ(e.target.value)}
-              className="w-full h-9 pr-9 pl-3 rounded-xl text-sm bg-secondary border border-border placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full h-10 pr-10 pl-4 rounded-2xl text-sm bg-secondary/50 border border-border focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none"
             />
           </div>
         </form>
 
-        {/* Right side */}
-        <div className="flex items-center gap-1 ml-auto">
-          {/* Theme toggle */}
+        {/* Côté droit : Langue, Thème, Utilisateur */}
+        <div className="flex items-center gap-2 ml-auto">
+          
+          <LanguageSwitcher />
+
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="h-9 w-9 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"
-              aria-label="Toggle theme"
+              className="h-10 w-10 rounded-2xl flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
             >
-              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
           )}
 
@@ -107,119 +117,110 @@ export function Navbar() {
             <div ref={userRef} className="relative">
               <button
                 onClick={() => setUserOpen(!userOpen)}
-                className="flex items-center gap-2 h-9 px-2.5 rounded-xl hover:bg-secondary transition-all"
+                className="flex items-center gap-2 h-10 px-2 rounded-2xl hover:bg-secondary transition-all border border-transparent hover:border-border"
               >
-                <div className="h-7 w-7 rounded-full bg-primary/15 flex items-center justify-center text-xs font-bold text-primary">
-                  {session.user.name?.[0]?.toUpperCase() ?? "U"}
+                <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center text-xs font-black text-primary shadow-inner">
+                  {session.user.name?.[0]?.toUpperCase()}
                 </div>
-                <span className="hidden md:inline text-sm font-medium max-w-[90px] truncate">
-                  {session.user.name}
-                </span>
-                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground hidden md:block" />
+                <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", userOpen && "rotate-180")} />
               </button>
 
               {userOpen && (
-                <div className="absolute top-full mt-1.5 end-0 w-52 rounded-xl border border-border bg-popover shadow-xl shadow-black/10 overflow-hidden animate-fade-up z-50 py-1">
+                <div className="absolute top-full mt-2 end-0 w-56 rounded-[1.5rem] border border-border bg-popover shadow-2xl shadow-black/20 overflow-hidden animate-fade-up z-50 py-2">
+                  <div className="px-4 py-3 border-b border-border/50 mb-1">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("nav.profile")}</p>
+                    <p className="text-sm font-bold truncate">{session.user.name}</p>
+                  </div>
 
-                  {/* Fix 2: Admin menu */}
                   {isAdmin && (
-                    <>
-                      <Link href="/admin" onClick={() => setUserOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                        <LayoutDashboard className="h-4 w-4" /> لوحة التحكم
-                      </Link>
-                      <div className="h-px bg-border/50 my-1" />
-                    </>
-                  )}
-
-                  {/* Fix 2: Freelancer menu — selling side only */}
-                  {isFreelancer && (
-                    <>
-                      <div className="px-3 py-1.5 text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider">
-                        لوحتي
-                      </div>
-                      <Link href="/dashboard/freelancer" onClick={() => setUserOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                        <TrendingUp className="h-4 w-4" /> لوحة المستقل
-                      </Link>
-                      <Link href="/dashboard/new-service" onClick={() => setUserOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                        <Package className="h-4 w-4" /> إضافة خدمة
-                      </Link>
-                      <div className="h-px bg-border/50 my-1" />
-                    </>
-                  )}
-
-                  {/* Fix 2: Client menu — buying side only */}
-                  {isClient && (
-                    <Link href="/profile/orders" onClick={() => setUserOpen(false)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                      <ShoppingBag className="h-4 w-4" /> طلباتي
+                    <Link href="/admin" onClick={() => setUserOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-primary hover:bg-primary/5 transition-colors">
+                      <LayoutDashboard className="h-4 w-4" /> {t("nav.dashboard")}
                     </Link>
                   )}
 
-                  <Link href="/profile" onClick={() => setUserOpen(false)}
-                    className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors">
-                    <User className="h-4 w-4" /> حسابي
+                  {isFreelancer && (
+                    <>
+                      <Link href="/dashboard/freelancer" onClick={() => setUserOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-primary hover:bg-primary/5 transition-colors">
+                        <TrendingUp className="h-4 w-4" /> {t("nav.myServices")}
+                      </Link>
+                      <Link href="/dashboard/sales" onClick={() => setUserOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary transition-colors">
+                        <ShoppingBag className="h-4 w-4" /> {t("dash.incomingOrders")}
+                      </Link>
+                    </>
+                  )}
+
+                  <Link href="/profile/orders" onClick={() => setUserOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary transition-colors">
+                    <Package className="h-4 w-4" /> {t("nav.myOrders")}
                   </Link>
 
-                  <div className="h-px bg-border/50 my-1" />
+                  <Link href="/profile/settings" onClick={() => setUserOpen(false)}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary transition-colors">
+                    <Settings className="h-4 w-4" /> {locale === 'ar' ? 'الإعدادات' : 'Paramètres'}
+                  </Link>
 
-                  {/* Fix 3: signOut with redirect — no logout page */}
+                  <div className="h-px bg-border/50 my-2" />
+
                   <button
-                    onClick={() => { signOut({ callbackUrl: "/" }); setUserOpen(false) }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-destructive hover:bg-destructive/8 transition-colors"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/5 transition-colors"
                   >
-                    <LogOut className="h-4 w-4" /> تسجيل الخروج
+                    <LogOut className="h-4 w-4" /> {t("nav.logout")}
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <>
-              <Link href="/auth/login"
-                className="hidden sm:flex h-9 px-3 items-center text-sm text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-all">
-                تسجيل الدخول
+            <div className="flex items-center gap-2">
+              <Link href="/auth/login" className="hidden sm:flex h-10 px-4 items-center text-sm font-bold text-muted-foreground hover:text-primary transition-all">
+                {t("nav.login")}
               </Link>
-              <Link href="/auth/register"
-                className="h-9 px-4 flex items-center text-sm font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
-                إنشاء حساب
+              <Link href="/auth/register" className="h-10 px-5 flex items-center text-sm font-black rounded-2xl bg-primary text-white hover:opacity-90 shadow-lg shadow-primary/20 transition-all active:scale-95">
+                {t("nav.register")}
               </Link>
-            </>
+            </div>
           )}
 
           <button
-            className="sm:hidden h-9 w-9 flex items-center justify-center rounded-lg hover:bg-secondary transition-all"
+            className="md:hidden h-10 w-10 flex items-center justify-center rounded-2xl bg-secondary hover:bg-border transition-all"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Menu Mobile (Traduit) */}
       {mobileOpen && (
-        <div className="sm:hidden border-t border-border bg-background animate-fade-up px-4 py-4 space-y-3">
+        <div className="md:hidden border-t border-border/50 bg-background animate-fade-up px-4 py-6 space-y-4 shadow-xl">
           <form onSubmit={search}>
-            <div className="relative">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input type="search" placeholder="ابحث عن خدمة..." value={q} onChange={e => setQ(e.target.value)}
-                className="w-full h-10 pr-9 pl-3 rounded-xl text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/20" />
-            </div>
+            <input
+              type="search" placeholder={t("nav.search")} value={q}
+              onChange={e => setQ(e.target.value)}
+              className="w-full h-12 px-4 rounded-2xl bg-secondary border border-border outline-none focus:border-primary"
+            />
           </form>
-          <nav className="flex flex-col gap-1">
-            <Link href="/categories" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">تصفح الخدمات</Link>
-            {isFreelancer && (
-              <Link href="/dashboard/freelancer" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">لوحة المستقل</Link>
-            )}
-            {isClient && !session && (
-              <Link href="/sell" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">ابدأ البيع</Link>
+          <nav className="flex flex-col gap-2">
+            <Link href="/categories" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-2xl font-bold hover:bg-secondary transition-colors">
+              {t("nav.browse")}
+            </Link>
+            {session && (
+              <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="px-4 py-3 rounded-2xl font-bold bg-primary/10 text-primary">
+                {t("nav.dashboard")}
+              </Link>
             )}
             {!session && (
-              <>
-                <Link href="/auth/login" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-lg text-sm hover:bg-secondary transition-colors">تسجيل الدخول</Link>
-                <Link href="/auth/register" onClick={() => setMobileOpen(false)} className="px-3 py-2.5 rounded-xl text-sm text-center bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">إنشاء حساب</Link>
-              </>
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <Link href="/auth/login" onClick={() => setMobileOpen(false)} className="flex h-12 items-center justify-center rounded-2xl border border-border font-bold">
+                  {t("nav.login")}
+                </Link>
+                <Link href="/auth/register" onClick={() => setMobileOpen(false)} className="flex h-12 items-center justify-center rounded-2xl bg-primary text-white font-bold">
+                  {t("nav.register")}
+                </Link>
+              </div>
             )}
           </nav>
         </div>

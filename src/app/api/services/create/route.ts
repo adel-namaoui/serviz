@@ -27,29 +27,52 @@ const schema = z.object({
 
 export async function POST(req: NextRequest) {
   const session = await auth()
-  if (!session?.user) return NextResponse.json({ error: "غير مسجّل" }, { status: 401 })
+  
+  // Vérification de l'ID utilisateur pour TypeScript
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "غير مسجّل" }, { status: 401 })
+  }
 
-  const user = await prisma.user.findUnique({ where: { id: session.user.id } })
-  if (!user || user.role === "CLIENT") return NextResponse.json({ error: "المستقلون فقط يمكنهم إضافة خدمات" }, { status: 403 })
+  try {
+    // Vérification du rôle (on utilise le rôle de la session directement)
+    if ((session.user as any).role !== "FREELANCER" && (session.user as any).role !== "ADMIN") {
+      return NextResponse.json({ error: "المستقلون فقط يمكنهم إضافة خدمات" }, { status: 403 })
+    }
 
-  const body = await req.json()
-  const parsed = schema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: "بيانات غير صالحة", details: parsed.error.flatten() }, { status: 400 })
+    const body = await req.json()
+    const parsed = schema.safeParse(body)
+    
+    if (!parsed.success) {
+      return NextResponse.json({ 
+        error: "بيانات غير صالحة", 
+        details: parsed.error.flatten() 
+      }, { status: 400 })
+    }
 
-  const { packages, ...data } = parsed.data
+    const { packages, ...data } = parsed.data
 
-  // Use titleAr as title if title not provided
-  const finalTitle = data.title || data.titleAr || ""
+    // FIX #5 : Suppression de la logique "finalTitle" redondante.
+    // Comme 'title' est obligatoire (min 5 chars), il ne sera jamais vide.
+    // Le spread '...data' contient déjà 'title' et 'titleAr'.
 
-  const service = await prisma.service.create({
-    data: {
-      ...data,
-      title: finalTitle,
-      sellerId: user.id,
-      packages: packages.length > 0 ? { createMany: { data: packages } } : undefined,
-    },
-    include: { packages: true, subCategory: { include: { category: true } } },
-  })
+    const service = await prisma.service.create({
+      data: {
+        ...data,
+        sellerId: session.user.id,
+        // Utilisation de 'create' au lieu de 'createMany' pour une meilleure compatibilité Prisma
+        packages: packages.length > 0 ? {
+          create: packages 
+        } : undefined,
+      },
+      include: { 
+        packages: true, 
+        subCategory: { include: { category: true } } 
+      },
+    })
 
-  return NextResponse.json(service, { status: 201 })
+    return NextResponse.json(service, { status: 201 })
+  } catch (e: any) {
+    console.error("Service Creation Error:", e)
+    return NextResponse.json({ error: "خطأ في الخادم" }, { status: 500 })
+  }
 }

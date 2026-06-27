@@ -5,6 +5,9 @@ import { DollarSign, Package, ShoppingBag, Plus, Star, Eye, ChevronLeft, LayoutG
 import { cn, formatPrice } from "@/lib/utils" 
 import { ServiceToggle } from "@/components/dashboard/ServiceToggle"
 
+// Map pour transformer le texte en composant icône
+const IconMap: any = { ShoppingBag, Zap, LayoutGrid, DollarSign }
+
 export default function FreelancerClient({ stats, services, userName }: any) {
   const { t, locale } = useTranslation()
 
@@ -26,22 +29,24 @@ export default function FreelancerClient({ stats, services, userName }: any) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((s: any) => (
-          <div key={s.label} className="bg-card border border-border rounded-[2rem] p-6 shadow-sm">
-            <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center mb-4 shadow-inner", s.color)}>
-              <s.icon className="h-6 w-6" />
+        {stats.map((s: any) => {
+          const Icon = IconMap[s.iconName] // On récupère l'icône ici
+          return (
+            <div key={s.label} className="bg-card border border-border rounded-[2rem] p-6 shadow-sm">
+              <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center mb-4 shadow-inner", s.color)}>
+                <Icon className="h-6 w-6" />
+              </div>
+              <p className="text-2xl font-black tracking-tight">{s.value}</p>
+              <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{t(s.label as any)}</p>
             </div>
-            <p className="text-2xl font-black tracking-tight">{s.value}</p>
-            <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">{t(s.label as any)}</p>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       <div className="space-y-6">
         <h2 className="text-xl font-bold flex items-center gap-2">
           <Package className="h-5 w-5 text-primary" /> {t("dash.myServices")}
         </h2>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((svc: any) => (
             <div key={svc.id} className="group bg-card border border-border rounded-[2.5rem] overflow-hidden flex flex-col">

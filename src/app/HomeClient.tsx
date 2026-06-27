@@ -195,7 +195,13 @@ export default function HomeClient({ categories, featuredServices }: any) {
         </div>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {featuredServices.map((s: any) => (
-            <ServiceCard key={s.id} {...s} sellerName={s.seller.name} price={s.packages[0]?.price ?? s.price} />
+            <ServiceCard 
+              key={s.id} 
+              {...s} 
+              sellerName={s.seller.name} 
+              sellerId={s.sellerId} // <-- AJOUTEZ CETTE LIGNE
+              price={s.packages[0]?.price ?? s.price} 
+            />
           ))}
         </div>
       </section>

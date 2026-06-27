@@ -13,7 +13,7 @@ const schema = z.object({
 export async function POST(req: NextRequest) {
   const session = await auth()
   
-  // Vérification stricte de l'ID utilisateur
+  // Vérification de l'authentification
   if (!session?.user?.id) {
     return NextResponse.json({ error: "غير مسجّل" }, { status: 401 })
   }
@@ -25,27 +25,32 @@ export async function POST(req: NextRequest) {
 
     const { orderId, serviceId, rating, comment } = parsed.data
 
-    // On vérifie le type ici avec 'as any' si le generate n'est pas encore propagé
+    // FIX #4 : Suppression des 'as any'. Prisma reconnaît maintenant la relation 'review'
     const order = await prisma.order.findUnique({ 
       where: { id: orderId }, 
-      include: { review: true } as any 
+      include: { review: true } 
     })
 
     if (!order) return NextResponse.json({ error: "الطلب غير موجود" }, { status: 404 })
-    if (order.buyerId !== session.user.id) return NextResponse.json({ error: "غير مصرح" }, { status: 403 })
     
+    // Sécurité : Seul l'acheteur peut noter
+    if (order.buyerId !== session.user.id) {
+      return NextResponse.json({ error: "غير مصرح" }, { status: 403 })
+    }
+    
+    // Logique métier : On ne note que ce qui est livré ou terminé
     if (!["DELIVERED", "COMPLETED"].includes(order.status)) {
       return NextResponse.json({ error: "لا يمكن التقييم قبل استلام الخدمة" }, { status: 422 })
     }
 
-    // Utilisation de 'as any' pour bypasser le lag de détection de Prisma
-    if ((order as any).review) {
+    // Vérification si un avis existe déjà (sans 'as any')
+    if (order.review) {
       return NextResponse.json({ error: "لقد قيّمت هذه الخدمة مسبقاً" }, { status: 409 })
     }
 
-    // Transaction pour créer la review et mettre à jour la note moyenne du service
+    // Transaction sécurisée et typée
     const review = await prisma.$transaction(async (tx) => {
-      const newReview = await (tx as any).review.create({
+      const newReview = await tx.review.create({
         data: { 
           orderId, 
           serviceId, 
@@ -55,8 +60,8 @@ export async function POST(req: NextRequest) {
         },
       })
 
-      // Recalcul de la moyenne
-      const agg = await (tx as any).review.aggregate({ 
+      // Recalcul de la moyenne du service
+      const agg = await tx.review.aggregate({ 
         where: { serviceId }, 
         _avg: { rating: true }, 
         _count: { rating: true } 
@@ -75,7 +80,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(review, { status: 201 })
   } catch (e: any) {
-    console.error(e)
+    console.error("Review API Error:", e)
     return NextResponse.json({ error: "خطأ في الخادم" }, { status: 500 })
   }
 }

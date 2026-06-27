@@ -8,44 +8,36 @@ export async function PATCH(
 ) {
   const session = await auth()
 
-  if (!session?.user) {
-    return NextResponse.json(
-      { error: "غير مسجّل" },
-      { status: 401 }
-    )
+  // Vérification de l'authentification
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "غير مسجّل" }, { status: 401 })
   }
 
   const { serviceId } = await params
 
+  // FIX #10 : 1ère requête DB - On récupère le service
   const service = await prisma.service.findUnique({
     where: { id: serviceId }
   })
 
   if (!service) {
-    return NextResponse.json(
-      { error: "الخدمة غير موجودة" },
-      { status: 404 }
-    )
+    return NextResponse.json({ error: "الخدمة غير موجودة" }, { status: 404 })
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id }
-  })
+  /**
+   * FIX #10 : Optimisation de la performance
+   * Au lieu de refaire un `prisma.user.findUnique`, on utilise le rôle 
+   * qui est déjà stocké dans le jeton de session (JWT).
+   */
+  const userRole = (session.user as any).role
+  const userId = session.user.id
 
-  if (!user) {
-    return NextResponse.json(
-      { error: "غير مصرح" },
-      { status: 403 }
-    )
+  // Vérification des permissions (Admin ou Propriétaire du service)
+  if (userRole !== "ADMIN" && service.sellerId !== userId) {
+    return NextResponse.json({ error: "غير مصرح" }, { status: 403 })
   }
 
-  if (user.role !== "ADMIN" && service.sellerId !== user.id) {
-    return NextResponse.json(
-      { error: "غير مصرح" },
-      { status: 403 }
-    )
-  }
-
+  // 2ème requête DB - Mise à jour
   const updated = await prisma.service.update({
     where: { id: serviceId },
     data: { isActive: !service.isActive }
